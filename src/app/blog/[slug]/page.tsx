@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+export const runtime = "edge";
+
 
 import { postBySlug } from "@/lib/site";
 
