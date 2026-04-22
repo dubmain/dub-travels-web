@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+export const runtime = "edge";
+
 import { postBySlug } from "@/lib/site";
 
 /** B-03 글 상세 (마크다운은 추후 MDX) */

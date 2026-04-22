@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+export const runtime = "edge";
+
 import { site, postsByCategory } from "@/lib/site";
 
 /** B-02 카테고리별 글 목록 */
