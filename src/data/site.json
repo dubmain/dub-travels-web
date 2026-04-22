@@ -1,0 +1,82 @@
+{
+  "blogId": 6,
+  "blogName": "dubTRAVELS",
+  "tagline": "짧은 휴가를 더 가치 있게 설계하는 여행 노트",
+  "theme": {
+    "bg": "#f0f9ff",
+    "text": "#0c4a6e",
+    "muted": "#0369a1",
+    "border": "#bae6fd",
+    "surface": "#ffffff",
+    "chipBg": "#e0f2fe",
+    "chipText": "#075985",
+    "accent": "#0284c7",
+    "accentStrong": "#0369a1",
+    "cardBorderHover": "#7dd3fc",
+    "heroFrom": "#164e63",
+    "heroTo": "#0e7490",
+    "heroTitle": "#ecfeff",
+    "heroSub": "#a5f3fc",
+    "headerBg": "rgba(255, 255, 255, 0.92)",
+    "footerBg": "#f0f9ff",
+    "prose": "#164e63"
+  },
+  "categories": [
+    {
+      "slug": "route-planning",
+      "title": "동선 설계"
+    },
+    {
+      "slug": "budget-trip",
+      "title": "예산 여행 전략"
+    },
+    {
+      "slug": "local-spots",
+      "title": "로컬 스팟 큐레이션"
+    },
+    {
+      "slug": "travel-tools",
+      "title": "여행 도구·앱"
+    },
+    {
+      "slug": "food-journal",
+      "title": "미식 기록"
+    }
+  ],
+  "posts": [
+    {
+      "slug": "route-planning-intro",
+      "title": "동선 설계 시작 가이드",
+      "categorySlug": "route-planning",
+      "categoryTitle": "동선 설계",
+      "summary": "동선 설계 핵심 포인트 정리",
+      "content": "## 개요\\n\\ndubTRAVELS 샘플 본문입니다.",
+      "publishedAt": "2025-02-01",
+      "viewCount": 1200
+    },
+    {
+      "slug": "budget-trip-playbook",
+      "title": "예산 여행 전략 실전 체크리스트",
+      "categorySlug": "budget-trip",
+      "categoryTitle": "예산 여행 전략",
+      "summary": "예산 여행 전략 운영 체크리스트",
+      "content": "## 실전\\n\\n샘플 본문",
+      "publishedAt": "2025-02-10",
+      "viewCount": 980
+    }
+  ],
+  "best": [
+    {
+      "slug": "route-planning-intro",
+      "title": "동선 설계 시작 가이드",
+      "categoryTitle": "동선 설계",
+      "viewCount": 1200
+    },
+    {
+      "slug": "budget-trip-playbook",
+      "title": "예산 여행 전략 실전 체크리스트",
+      "categoryTitle": "예산 여행 전략",
+      "viewCount": 980
+    }
+  ]
+}
