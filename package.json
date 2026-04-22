@@ -6,7 +6,8 @@
     "dev": "next dev -p 3006",
     "build": "next build",
     "start": "next start -p 3006",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:worker": "npx @opennextjs/cloudflare@1.13.1 build"
   },
   "dependencies": {
     "next": "14.2.18",
@@ -22,6 +23,7 @@
     "eslint-config-next": "14.2.18",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "@opennextjs/cloudflare": "1.13.1"
   }
 }
