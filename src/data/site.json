@@ -27,6 +27,23 @@
       "title": "일반"
     }
   ],
-  "posts": [],
-  "best": []
+  "posts": [
+    {
+      "slug": "manual-2df6f3cab0954df1",
+      "title": "여행이지롱",
+      "categorySlug": "general",
+      "categoryTitle": "일반",
+      "summary": "",
+      "publishedAt": "",
+      "viewCount": 0
+    }
+  ],
+  "best": [
+    {
+      "slug": "manual-2df6f3cab0954df1",
+      "title": "여행이지롱",
+      "categoryTitle": "일반",
+      "viewCount": 0
+    }
+  ]
 }
