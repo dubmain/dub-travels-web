@@ -58,32 +58,36 @@ jobs:
           }
 
           (async () => {
-            const candidates = [
-              `${base}/v1/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`,
-              `${base}/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`,
-            ];
-            let text = '';
-            let parsed = null;
-            let matched = '';
-            for (const url of candidates) {
+            const primary = `${base}/v1/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`;
+            const fallback = `${base}/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`;
+
+            const call = async (url) => {
               const res = await fetch(url, {
                 headers: {
                   'X-Admin-Internal-Secret': secret,
                   Accept: 'application/json',
                 },
               });
-              text = await res.text();
-              if (res.ok) {
-                parsed = JSON.parse(text);
-                matched = url;
-                break;
+              const text = await res.text();
+              return { res, text, url };
+            };
+
+            let parsed = null;
+            const first = await call(primary);
+            if (first.res.ok) {
+              parsed = JSON.parse(first.text);
+              console.log(`bundle endpoint matched: ${first.url}`);
+            } else if (first.res.status === 404) {
+              console.warn(`bundle endpoint miss 404: ${first.url}`);
+              const second = await call(fallback);
+              if (!second.res.ok) {
+                throw new Error(`bundle fetch failed fallback ${second.res.status}: ${second.text.slice(0, 1200)}`);
               }
-              console.warn(`bundle endpoint miss ${res.status}: ${url}`);
+              parsed = JSON.parse(second.text);
+              console.log(`bundle endpoint matched: ${second.url}`);
+            } else {
+              throw new Error(`bundle fetch failed primary ${first.res.status}: ${first.text.slice(0, 1200)}`);
             }
-            if (!parsed) {
-              throw new Error(`bundle fetch failed for all endpoints. lastBody=${text.slice(0, 800)}`);
-            }
-            console.log(`bundle endpoint matched: ${matched}`);
             const bundle = parsed?.data;
             if (!bundle || !Array.isArray(bundle.posts) || !Array.isArray(bundle.categories)) {
               throw new Error('Invalid bundle response shape');
