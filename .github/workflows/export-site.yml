@@ -137,10 +137,12 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          if git diff --quiet; then
+          # git diff는 미추적 posts/*.md를 보면 "변경 없음"으로 나와 커밋이 스킵될 수 있음
+          if [ -z "$(git status --porcelain -- src/data/site.json src/data/posts)" ]; then
             echo "No changes to commit"
             exit 0
           fi
+          git status --short src/data/site.json src/data/posts
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/site.json src/data/posts
