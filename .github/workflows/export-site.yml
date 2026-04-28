@@ -15,8 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BLOG_SLUG: travels
-      OUT_PATH: src/data/site.json
-      DATABASE_URL: ${{ secrets.DUB_DATABASE_URL }}
+      ADMIN_API_BASE_URL: ${{ secrets.ADMIN_API_BASE_URL }}
+      ADMIN_INTERNAL_SECRET: ${{ secrets.ADMIN_INTERNAL_SECRET }}
+      LOCALE: ko
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -25,37 +26,95 @@ jobs:
 
       - name: Validate required secrets
         run: |
-          if [ -z "${{ secrets.DUB_GH_PAT }}" ]; then
-            echo "::error::DUB_GH_PAT secret is required (admin-api checkout token)."
+          if [ -z "${{ secrets.ADMIN_API_BASE_URL }}" ]; then
+            echo "::error::ADMIN_API_BASE_URL secret is required."
             exit 1
           fi
-          if [ -z "${{ secrets.DUB_DATABASE_URL }}" ]; then
-            echo "::error::DUB_DATABASE_URL secret is required (MariaDB connection string)."
+          if [ -z "${{ secrets.ADMIN_INTERNAL_SECRET }}" ]; then
+            echo "::error::ADMIN_INTERNAL_SECRET secret is required."
             exit 1
           fi
 
-      - name: Checkout admin api tools
-        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          repository: dubmain/dub-admin-api
-          token: ${{ secrets.DUB_GH_PAT }}
-          path: .tmp/dub-admin-api
+          node-version: "20"
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
+      - name: Fetch bundle and write files
         run: |
-          python -m pip install --upgrade pip
-          pip install -r ".tmp/dub-admin-api/requirements.txt"
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
 
-      - name: Export site.json + posts
-        run: |
-          PYTHONPATH=".tmp/dub-admin-api" python ".tmp/dub-admin-api/scripts/export_site_json.py" \
-            --blog-slug "${BLOG_SLUG}" \
-            --out "${OUT_PATH}"
+          const base = String(process.env.ADMIN_API_BASE_URL || '').replace(/\/+$/, '');
+          const slug = String(process.env.BLOG_SLUG || '').trim();
+          const locale = String(process.env.LOCALE || 'ko').trim();
+          const secret = String(process.env.ADMIN_INTERNAL_SECRET || '').trim();
+
+          if (!base || !slug || !secret) {
+            throw new Error('Missing required env vars (ADMIN_API_BASE_URL, BLOG_SLUG, ADMIN_INTERNAL_SECRET).');
+          }
+
+          (async () => {
+            const url = `${base}/v1/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`;
+            const res = await fetch(url, {
+              headers: {
+                'X-Admin-Internal-Secret': secret,
+                Accept: 'application/json',
+              },
+            });
+            const text = await res.text();
+            if (!res.ok) {
+              throw new Error(`bundle fetch failed ${res.status}: ${text.slice(0, 800)}`);
+            }
+            const parsed = JSON.parse(text);
+            const bundle = parsed?.data;
+            if (!bundle || !Array.isArray(bundle.posts) || !Array.isArray(bundle.categories)) {
+              throw new Error('Invalid bundle response shape');
+            }
+
+            const sitePath = path.join(process.cwd(), 'src', 'data', 'site.json');
+            const postsDir = path.join(process.cwd(), 'src', 'data', 'posts');
+            const existing = JSON.parse(fs.readFileSync(sitePath, 'utf8'));
+
+            const postsMeta = [];
+            const slugSet = new Set();
+            fs.mkdirSync(postsDir, { recursive: true });
+
+            for (const row of bundle.posts) {
+              const s = String(row?.slug || '').trim();
+              if (!s) continue;
+              slugSet.add(s);
+              const body = typeof row.content === 'string' ? row.content : '';
+              fs.writeFileSync(path.join(postsDir, `${s}.md`), body, 'utf8');
+              const { content, ...meta } = row;
+              postsMeta.push(meta);
+            }
+
+            for (const file of fs.readdirSync(postsDir)) {
+              if (!file.endsWith('.md')) continue;
+              const s = file.slice(0, -3);
+              if (!slugSet.has(s)) fs.rmSync(path.join(postsDir, file));
+            }
+
+            const nextSite = {
+              ...existing,
+              blogId: bundle.blogId,
+              tagline: bundle.tagline || existing.tagline || '',
+              categories: bundle.categories,
+              posts: postsMeta,
+              best: bundle.best || [],
+            };
+            if (!existing.blogName && bundle.blogName) nextSite.blogName = bundle.blogName;
+
+            fs.writeFileSync(sitePath, `${JSON.stringify(nextSite, null, 2)}
+`, 'utf8');
+            console.log(`bundle synced: ${postsMeta.length} posts`);
+          })().catch((e) => {
+            console.error(e);
+            process.exit(1);
+          });
+          NODE
 
       - name: Commit and push if changed
         run: |
