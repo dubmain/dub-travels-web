@@ -13,6 +13,7 @@ concurrency:
 jobs:
   export:
     runs-on: ubuntu-latest
+    environment: production
     env:
       BLOG_SLUG: travels
       ADMIN_API_BASE_URL: ${{ secrets.ADMIN_API_BASE_URL }}
