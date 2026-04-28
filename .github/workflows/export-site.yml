@@ -1,0 +1,59 @@
+name: Export Site Bundle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: export-site-main
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    env:
+      BLOG_SLUG: travels
+      OUT_PATH: src/data/site.json
+      DATABASE_URL: ${{ secrets.DUB_DATABASE_URL }}
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout admin api tools
+        uses: actions/checkout@v4
+        with:
+          repository: dubmain/dub-admin-api
+          token: ${{ secrets.DUB_GH_PAT }}
+          path: .tmp/dub-admin-api
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ".tmp/dub-admin-api/requirements.txt"
+
+      - name: Export site.json + posts
+        run: |
+          PYTHONPATH=".tmp/dub-admin-api" python ".tmp/dub-admin-api/scripts/export_site_json.py" \
+            --blog-slug "${BLOG_SLUG}" \
+            --out "${OUT_PATH}"
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/site.json src/data/posts
+          git commit -m "자동 동기화: site bundle"
+          git push origin HEAD:main
