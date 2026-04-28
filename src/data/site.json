@@ -22,26 +22,11 @@
     "prose": "#164e63"
   },
   "categories": [
-    {
-      "slug": "route-planning",
-      "title": "동선 설계"
-    },
-    {
-      "slug": "budget-trip",
-      "title": "예산 여행 전략"
-    },
-    {
-      "slug": "local-spots",
-      "title": "로컬 스팟 큐레이션"
-    },
-    {
-      "slug": "travel-tools",
-      "title": "여행 도구·앱"
-    },
-    {
-      "slug": "food-journal",
-      "title": "미식 기록"
-    }
+    { "slug": "route-planning", "title": "동선 설계" },
+    { "slug": "budget-trip", "title": "예산 여행 전략" },
+    { "slug": "local-spots", "title": "로컬 스팟 큐레이션" },
+    { "slug": "travel-tools", "title": "여행 도구·앱" },
+    { "slug": "food-journal", "title": "미식 기록" }
   ],
   "posts": [
     {
@@ -50,7 +35,6 @@
       "categorySlug": "route-planning",
       "categoryTitle": "동선 설계",
       "summary": "동선 설계 핵심 포인트 정리",
-      "content": "## 개요\\n\\ndubTRAVELS 샘플 본문입니다.",
       "publishedAt": "2025-02-01",
       "viewCount": 1200
     },
@@ -60,7 +44,6 @@
       "categorySlug": "budget-trip",
       "categoryTitle": "예산 여행 전략",
       "summary": "예산 여행 전략 운영 체크리스트",
-      "content": "## 실전\\n\\n샘플 본문",
       "publishedAt": "2025-02-10",
       "viewCount": 980
     }

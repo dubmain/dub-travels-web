@@ -1,17 +1,18 @@
 /**
- * 빌드 시 정적 JSON(추후 스크립트 생성) — 런타임 FastAPI 미호출.
+ * 빌드 시 정적 JSON — 런타임 FastAPI 미호출.
+ * 글 본문은 `src/data/posts/{slug}.md`, 메타는 `site.json`의 posts[].
  */
 
 import raw from "@/data/site.json";
 
 export type SiteCategory = { slug: string; title: string };
+/** 목록·SEO용 메타(`site.json` posts 항목, content 없음) */
 export type SitePost = {
   slug: string;
   title: string;
   categorySlug: string;
   categoryTitle: string;
   summary: string;
-  content: string;
   publishedAt: string;
   viewCount: number;
 };
@@ -80,3 +81,5 @@ export function postsByCategory(slug: string): SitePost[] {
 export function postBySlug(slug: string): SitePost | undefined {
   return site.posts.find((p) => p.slug === slug);
 }
+
+export { postBodyMarkdown } from "@/lib/postBodies";
