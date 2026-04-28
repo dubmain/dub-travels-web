@@ -47,7 +47,8 @@ jobs:
           const fs = require('node:fs');
           const path = require('node:path');
 
-          const base = String(process.env.ADMIN_API_BASE_URL || '').replace(/\/+$/, '');
+          const baseRaw = String(process.env.ADMIN_API_BASE_URL || '').replace(/\/+$/, '');
+          const base = baseRaw.replace(/\/v1(?:\/admin)?$/i, '');
           const slug = String(process.env.BLOG_SLUG || '').trim();
           const locale = String(process.env.LOCALE || 'ko').trim();
           const secret = String(process.env.ADMIN_INTERNAL_SECRET || '').trim();
