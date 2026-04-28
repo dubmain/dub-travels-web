@@ -23,6 +23,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.DUB_GH_PAT }}" ]; then
+            echo "::error::DUB_GH_PAT secret is required (admin-api checkout token)."
+            exit 1
+          fi
+          if [ -z "${{ secrets.DUB_DATABASE_URL }}" ]; then
+            echo "::error::DUB_DATABASE_URL secret is required (MariaDB connection string)."
+            exit 1
+          fi
+
       - name: Checkout admin api tools
         uses: actions/checkout@v4
         with:
