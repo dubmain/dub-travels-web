@@ -108,8 +108,7 @@ jobs:
             };
             if (!existing.blogName && bundle.blogName) nextSite.blogName = bundle.blogName;
 
-            fs.writeFileSync(sitePath, `${JSON.stringify(nextSite, null, 2)}
-`, 'utf8');
+            fs.writeFileSync(sitePath, `${JSON.stringify(nextSite, null, 2)}\n`, 'utf8');
             console.log(`bundle synced: ${postsMeta.length} posts`);
           })().catch((e) => {
             console.error(e);
