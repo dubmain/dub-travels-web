@@ -58,18 +58,32 @@ jobs:
           }
 
           (async () => {
-            const url = `${base}/v1/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`;
-            const res = await fetch(url, {
-              headers: {
-                'X-Admin-Internal-Secret': secret,
-                Accept: 'application/json',
-              },
-            });
-            const text = await res.text();
-            if (!res.ok) {
-              throw new Error(`bundle fetch failed ${res.status}: ${text.slice(0, 800)}`);
+            const candidates = [
+              `${base}/v1/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`,
+              `${base}/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`,
+            ];
+            let text = '';
+            let parsed = null;
+            let matched = '';
+            for (const url of candidates) {
+              const res = await fetch(url, {
+                headers: {
+                  'X-Admin-Internal-Secret': secret,
+                  Accept: 'application/json',
+                },
+              });
+              text = await res.text();
+              if (res.ok) {
+                parsed = JSON.parse(text);
+                matched = url;
+                break;
+              }
+              console.warn(`bundle endpoint miss ${res.status}: ${url}`);
             }
-            const parsed = JSON.parse(text);
+            if (!parsed) {
+              throw new Error(`bundle fetch failed for all endpoints. lastBody=${text.slice(0, 800)}`);
+            }
+            console.log(`bundle endpoint matched: ${matched}`);
             const bundle = parsed?.data;
             if (!bundle || !Array.isArray(bundle.posts) || !Array.isArray(bundle.categories)) {
               throw new Error('Invalid bundle response shape');
