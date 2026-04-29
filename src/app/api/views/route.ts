@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
+/**
+ * Cloudflare Pages 배포 필수 env
+ * - INTERNAL_API_BASE_URL: admin-api base URL (예: https://api.example.com)
+ * - ADMIN_INTERNAL_SECRET: admin-api 와 동일한 내부 시크릿
+ * - BLOG_SLUG: blogs.slug (finance|gov|shopping|sidejob|travels|ai)
+ * - BLOG_SITE_LOCALE: ko|en (기본 ko)
+ */
+
 function internalBase(): string {
   const base = process.env.INTERNAL_API_BASE_URL;
   if (!base?.trim()) return "";
