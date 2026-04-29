@@ -10,21 +10,14 @@ export function PostViewTracker({ slug }: { slug: string }) {
   useEffect(() => {
     const s = (slug || "").trim();
     if (!s || s.includes("/") || s.includes("..")) return;
-    const payload = JSON.stringify({ slug: s });
-    try {
-      if (typeof navigator !== "undefined" && navigator.sendBeacon) {
-        navigator.sendBeacon("/api/views", new Blob([payload], { type: "application/json" }));
-      } else {
-        void fetch("/api/views", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: payload,
-          keepalive: true,
-        });
-      }
-    } catch {
+    const payload = JSON.stringify({ slug: s });    void fetch("/api/views", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: payload,
+      keepalive: true,
+    }).catch(() => {
       /* ignore */
-    }
+    });
   }, [slug]);
 
   return null;
