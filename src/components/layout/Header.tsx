@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { site } from "@/lib/site";
 
 /** B-LAYOUT 헤더 — 홈 → 베스트 → 카테고리 5개(독립 링크). */
@@ -27,7 +29,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="ml-auto text-xs text-[var(--theme-muted)]">EN · 한국어 (추후)</div>
+        <Suspense fallback={<div className="ml-auto text-xs text-[var(--theme-muted)]">EN · 한국어</div>}><LanguageSwitcher /></Suspense>
       </div>
     </header>
   );

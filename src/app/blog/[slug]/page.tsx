@@ -2,24 +2,28 @@ import { notFound } from "next/navigation";
 import { marked } from "marked";
 
 import { PostViewTracker } from "@/components/PostViewTracker";
-import { postBodyMarkdown, postBySlug } from "@/lib/site";
+import { loadRuntimeSiteData } from "@/lib/runtime-site";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
-/** B-03 글 상세 — 본문은 `src/data/posts/{slug}.md` */
-export default function PostPage({ params }: { params: { slug: string } }) {
-  const post = postBySlug(params.slug);
+/** B-03 글 상세 */
+export default async function PostPage({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams?: { lang?: string };
+}) {
+  const { lang, data } = await loadRuntimeSiteData(searchParams?.lang);
+  const post = data.posts.find((p) => p.slug === params.slug);
   if (!post) notFound();
-  const body = postBodyMarkdown(params.slug);
-  if (body === undefined) notFound();
-  const bodyHtml = marked.parse(body, { gfm: true });
+  const bodyHtml = marked.parse(post.content || "", { gfm: true });
 
   return (
     <article>
-      <PostViewTracker slug={params.slug} />
-      <span className="rounded-full bg-[var(--theme-chip-bg)] px-2 py-0.5 text-xs text-[var(--theme-chip-text)]">
-        {post.categoryTitle}
-      </span>
+      <PostViewTracker slug={params.slug} locale={lang} />
+      <span className="rounded-full bg-[var(--theme-chip-bg)] px-2 py-0.5 text-xs text-[var(--theme-chip-text)]">{post.categoryTitle}</span>
       <h1 className="mt-3 text-3xl font-bold text-[var(--theme-text)]">{post.title}</h1>
       <p className="mt-2 text-sm text-[var(--theme-muted)]">
         {post.publishedAt} · 조회 {post.viewCount.toLocaleString()}

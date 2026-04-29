@@ -1,9 +1,15 @@
 import Link from "next/link";
 
-import { site } from "@/lib/site";
+import { loadRuntimeSiteData } from "@/lib/runtime-site";
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 /** B-01 홈 */
-export default function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams?: { lang?: string } }) {
+  const { lang, data } = await loadRuntimeSiteData(searchParams?.lang);
+  const withLang = (path: string) => `${path}?lang=${lang}`;
+
   return (
     <div className="space-y-10">
       <section
@@ -12,32 +18,26 @@ export default function HomePage() {
           backgroundImage: `linear-gradient(to bottom right, var(--theme-hero-from), var(--theme-hero-to))`,
         }}
       >
-        <h1 className="text-2xl font-bold sm:text-3xl text-[var(--theme-hero-title)]">{site.tagline}</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl text-[var(--theme-hero-title)]">{data.tagline}</h1>
         <p className="mt-2 text-sm text-[var(--theme-hero-sub)]">샘플 정적 데이터 — 빌드 시 JSON으로 교체</p>
       </section>
 
       <section>
         <h2 className="mb-3 text-lg font-semibold text-[var(--theme-text)]">베스트 글</h2>
         <ul className="space-y-2">
-          {site.best.map((b) => (
+          {data.best.map((b) => (
             <li key={b.slug} className="flex flex-wrap items-center gap-2 text-sm">
               <span className="rounded-full bg-[var(--theme-chip-bg)] px-2 py-0.5 text-xs text-[var(--theme-chip-text)]">
                 {b.categoryTitle}
               </span>
-              <Link
-                className="font-medium text-[var(--theme-accent)] hover:text-[var(--theme-accent-strong)] hover:underline"
-                href={`/blog/${b.slug}`}
-              >
+              <Link className="font-medium text-[var(--theme-accent)] hover:text-[var(--theme-accent-strong)] hover:underline" href={withLang(`/blog/${b.slug}`)}>
                 {b.title}
               </Link>
               <span className="text-[var(--theme-muted)]">· {b.viewCount.toLocaleString()} views</span>
             </li>
           ))}
         </ul>
-        <Link
-          className="mt-3 inline-block text-sm text-[var(--theme-accent)] hover:text-[var(--theme-accent-strong)] hover:underline"
-          href="/best"
-        >
+        <Link className="mt-3 inline-block text-sm text-[var(--theme-accent)] hover:text-[var(--theme-accent-strong)] hover:underline" href={withLang('/best')}>
           전체 보기 →
         </Link>
       </section>
@@ -45,10 +45,10 @@ export default function HomePage() {
       <section>
         <h2 className="mb-3 text-lg font-semibold text-[var(--theme-text)]">최신 글</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          {site.posts.map((p) => (
+          {data.posts.map((p) => (
             <Link
               key={p.slug}
-              href={`/blog/${p.slug}`}
+              href={withLang(`/blog/${p.slug}`)}
               className="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4 shadow-sm hover:border-[var(--theme-card-border-hover)]"
             >
               <span className="text-xs text-[var(--theme-muted)]">{p.categoryTitle}</span>
