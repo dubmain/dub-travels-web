@@ -10,7 +10,9 @@ export function PostViewTracker({ slug }: { slug: string }) {
   useEffect(() => {
     const s = (slug || "").trim();
     if (!s || s.includes("/") || s.includes("..")) return;
-    const payload = JSON.stringify({ slug: s });    void fetch("/api/views", {
+    const locale = (typeof document !== "undefined" ? document.documentElement.lang : "").trim().toLowerCase();
+    const normalizedLocale = locale === "en" ? "en" : "ko";
+    const payload = JSON.stringify({ slug: s, locale: normalizedLocale });    void fetch("/api/views", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: payload,

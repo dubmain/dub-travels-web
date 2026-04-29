@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   const secret = (process.env.ADMIN_INTERNAL_SECRET ?? "").trim();
   const blogSlug = (process.env.BLOG_SLUG ?? "").trim().toLowerCase();
   const localeRaw = (process.env.BLOG_SITE_LOCALE ?? "ko").trim().toLowerCase();
-  const locale = localeRaw === "en" ? "en" : "ko";
+  const defaultLocale = localeRaw === "en" ? "en" : "ko";
 
   if (!base || !secret || !blogSlug) {
     return NextResponse.json(
@@ -43,6 +43,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: { code: "VIEWS_BAD_JSON", message: "JSON 본문이 필요합니다." } }, { status: 400 });
   }
   const slug = typeof (body as { slug?: unknown }).slug === "string" ? (body as { slug: string }).slug.trim() : "";
+  const localeInput = typeof (body as { locale?: unknown }).locale === "string" ? (body as { locale: string }).locale.trim().toLowerCase() : "";
+  const locale = localeInput === "en" ? "en" : localeInput === "ko" ? "ko" : defaultLocale;
   if (!slugOk(slug)) {
     return NextResponse.json({ success: false, error: { code: "VIEWS_INVALID_SLUG", message: "유효하지 않은 slug입니다." } }, { status: 400 });
   }
