@@ -1,12 +1,13 @@
 /**
  * 빌드 시 정적 JSON — 런타임 FastAPI 미호출.
- * 글 본문은 `src/data/posts/{slug}.md`, 메타는 `site.json`의 posts[].
+ * 언어별 번들(`site.ko.json`, `site.en.json`)을 미리 포함한다.
  */
 
-import raw from "@/data/site.json";
+import rawKo from "@/data/site.ko.json";
+import rawEn from "@/data/site.en.json";
 
+export type SiteLang = "ko" | "en";
 export type SiteCategory = { slug: string; title: string };
-/** 목록·SEO용 메타(`site.json` posts 항목, content 없음) */
 export type SitePost = {
   slug: string;
   title: string;
@@ -18,7 +19,6 @@ export type SitePost = {
 };
 export type SiteBest = { slug: string; title: string; categoryTitle: string; viewCount: number };
 
-/** 블로그별 시각 테마 — `site.json`의 `theme`와 동일 키. */
 export type SiteTheme = {
   bg: string;
   text: string;
@@ -49,9 +49,21 @@ export type SiteData = {
   best: SiteBest[];
 };
 
-export const site = raw as SiteData;
+const sites: Record<SiteLang, SiteData> = {
+  ko: rawKo as SiteData,
+  en: rawEn as SiteData,
+};
 
-/** `<body style={...}>`용 CSS 변수 맵 */
+export const site = sites.ko;
+
+export function normalizeSiteLang(raw: string | undefined): SiteLang {
+  return raw === "en" ? "en" : "ko";
+}
+
+export function siteByLang(lang: SiteLang): SiteData {
+  return sites[lang] ?? sites.ko;
+}
+
 export function themeToCssVars(theme: SiteTheme): Record<string, string> {
   return {
     "--theme-bg": theme.bg,
@@ -74,12 +86,12 @@ export function themeToCssVars(theme: SiteTheme): Record<string, string> {
   };
 }
 
-export function postsByCategory(slug: string): SitePost[] {
-  return site.posts.filter((p) => p.categorySlug === slug);
+export function postsByCategory(lang: SiteLang, slug: string): SitePost[] {
+  return siteByLang(lang).posts.filter((p) => p.categorySlug === slug);
 }
 
-export function postBySlug(slug: string): SitePost | undefined {
-  return site.posts.find((p) => p.slug === slug);
+export function postBySlug(lang: SiteLang, slug: string): SitePost | undefined {
+  return siteByLang(lang).posts.find((p) => p.slug === slug);
 }
 
 export { postBodyMarkdown } from "@/lib/postBodies";

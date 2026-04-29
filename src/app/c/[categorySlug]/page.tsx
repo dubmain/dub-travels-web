@@ -1,23 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { loadRuntimeSiteData } from "@/lib/runtime-site";
+import { normalizeSiteLang, postsByCategory, siteByLang } from "@/lib/site";
 
 export const runtime = "edge";
-export const dynamic = "force-dynamic";
 
 /** B-02 카테고리별 글 목록 */
-export default async function CategoryPage({
-  params,
-  searchParams,
-}: {
-  params: { categorySlug: string };
-  searchParams?: { lang?: string };
-}) {
-  const { lang, data } = await loadRuntimeSiteData(searchParams?.lang);
-  const cat = data.categories.find((c) => c.slug === params.categorySlug);
+export default function CategoryPage({ params, searchParams }: { params: { categorySlug: string }; searchParams?: { lang?: string } }) {
+  const lang = normalizeSiteLang(searchParams?.lang);
+  const s = siteByLang(lang);
+  const cat = s.categories.find((c) => c.slug === params.categorySlug);
   if (!cat) notFound();
-  const posts = data.posts.filter((p) => p.categorySlug === params.categorySlug);
+  const posts = postsByCategory(lang, params.categorySlug);
   const withLang = (path: string) => `${path}?lang=${lang}`;
 
   return (
@@ -27,9 +21,7 @@ export default async function CategoryPage({
       <ul className="space-y-3">
         {posts.map((p) => (
           <li key={p.slug}>
-            <Link className="text-[var(--theme-accent)] hover:text-[var(--theme-accent-strong)] hover:underline" href={withLang(`/blog/${p.slug}`)}>
-              {p.title}
-            </Link>
+            <Link className="text-[var(--theme-accent)] hover:text-[var(--theme-accent-strong)] hover:underline" href={withLang(`/blog/${p.slug}`)}>{p.title}</Link>
             <p className="text-sm text-[var(--theme-muted)]">{p.summary}</p>
           </li>
         ))}

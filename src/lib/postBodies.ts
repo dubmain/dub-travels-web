@@ -1,7 +1,8 @@
 /**
- * 글 본문은 `src/data/posts/{slug}.md` — 빌드 시 webpack이 문자열로 인라인한다.
- * Cloudflare Edge 런타임에서도 fs 없이 동작하도록 require.context 사용.
+ * 글 본문은 `src/data/posts/{lang}/{slug}.md` — 빌드 시 webpack이 문자열로 인라인한다.
  */
+
+import type { SiteLang } from "@/lib/site";
 
 type WebpackRequire = typeof require & {
   context: (
@@ -15,16 +16,20 @@ type WebpackRequire = typeof require & {
   };
 };
 
-const ctx = (require as WebpackRequire).context("../data/posts", false, /\.md$/, "sync");
-
+const ctx = (require as WebpackRequire).context("../data/posts", true, /\.md$/, "sync");
 const bodies: Record<string, string> = {};
+
 for (const key of ctx.keys()) {
-  const slug = key.replace(/^\.\//, "").replace(/\.md$/i, "");
   const mod = ctx(key);
-  bodies[slug] = typeof mod === "string" ? mod : (mod?.default ?? "");
+  const text = typeof mod === "string" ? mod : (mod?.default ?? "");
+  const normalized = key.replace(/^\.\//, ""); // ko/slug.md
+  const [langRaw, file] = normalized.split("/");
+  const slug = (file || "").replace(/\.md$/i, "");
+  const lang = langRaw === "en" ? "en" : "ko";
+  if (!slug) continue;
+  bodies[`${lang}:${slug}`] = text;
 }
 
-export function postBodyMarkdown(slug: string): string | undefined {
-  if (!Object.prototype.hasOwnProperty.call(bodies, slug)) return undefined;
-  return bodies[slug];
+export function postBodyMarkdown(lang: SiteLang, slug: string): string | undefined {
+  return bodies[`${lang}:${slug}`] ?? bodies[`ko:${slug}`];
 }

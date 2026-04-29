@@ -1,0 +1,49 @@
+{
+  "blogId": 6,
+  "blogName": "dubTRAVELS",
+  "tagline": "dubTRAVELS",
+  "theme": {
+    "bg": "#f0f9ff",
+    "text": "#0c4a6e",
+    "muted": "#0369a1",
+    "border": "#bae6fd",
+    "surface": "#ffffff",
+    "chipBg": "#e0f2fe",
+    "chipText": "#075985",
+    "accent": "#0284c7",
+    "accentStrong": "#0369a1",
+    "cardBorderHover": "#7dd3fc",
+    "heroFrom": "#164e63",
+    "heroTo": "#0e7490",
+    "heroTitle": "#ecfeff",
+    "heroSub": "#a5f3fc",
+    "headerBg": "rgba(255, 255, 255, 0.92)",
+    "footerBg": "#f0f9ff",
+    "prose": "#164e63"
+  },
+  "categories": [
+    {
+      "slug": "general",
+      "title": "일반"
+    }
+  ],
+  "posts": [
+    {
+      "slug": "manual-2df6f3cab0954df1",
+      "title": "여행이지롱",
+      "categorySlug": "general",
+      "categoryTitle": "일반",
+      "summary": "",
+      "publishedAt": "",
+      "viewCount": 0
+    }
+  ],
+  "best": [
+    {
+      "slug": "manual-2df6f3cab0954df1",
+      "title": "여행이지롱",
+      "categoryTitle": "일반",
+      "viewCount": 0
+    }
+  ]
+}
