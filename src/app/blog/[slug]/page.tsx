@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { marked } from "marked";
 
-export const runtime = "edge";
-
-
+import { PostViewTracker } from "@/components/PostViewTracker";
 import { postBodyMarkdown, postBySlug } from "@/lib/site";
+
+export const runtime = "edge";
 
 /** B-03 글 상세 — 본문은 `src/data/posts/{slug}.md` */
 export default function PostPage({ params }: { params: { slug: string } }) {
@@ -16,6 +16,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
 
   return (
     <article>
+      <PostViewTracker slug={params.slug} />
       <span className="rounded-full bg-[var(--theme-chip-bg)] px-2 py-0.5 text-xs text-[var(--theme-chip-text)]">
         {post.categoryTitle}
       </span>
