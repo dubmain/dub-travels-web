@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { marked } from "marked";
 
 export const runtime = "edge";
 
@@ -11,6 +12,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
   if (!post) notFound();
   const body = postBodyMarkdown(params.slug);
   if (body === undefined) notFound();
+  const bodyHtml = marked.parse(body, { gfm: true });
 
   return (
     <article>
@@ -21,7 +23,10 @@ export default function PostPage({ params }: { params: { slug: string } }) {
       <p className="mt-2 text-sm text-[var(--theme-muted)]">
         {post.publishedAt} · 조회 {post.viewCount.toLocaleString()}
       </p>
-      <div className="mt-8 max-w-3xl whitespace-pre-wrap leading-relaxed text-[var(--theme-prose)]">{body}</div>
+      <div
+        className="prose prose-slate mt-8 max-w-3xl leading-relaxed text-[var(--theme-prose)] prose-headings:text-[var(--theme-text)] prose-strong:text-[var(--theme-text)] prose-a:text-[var(--theme-accent-strong)]"
+        dangerouslySetInnerHTML={{ __html: bodyHtml }}
+      />
     </article>
   );
 }
