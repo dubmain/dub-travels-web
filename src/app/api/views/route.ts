@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 function internalBase(): string {
   const base = process.env.INTERNAL_API_BASE_URL;
   if (!base?.trim()) return "";
