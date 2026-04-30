@@ -32,11 +32,6 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
         viewAll: "See all →",
         latestTitle: "Latest",
         latestLead: "Fresh posts from the magazine.",
-        newsletterTitle: "Stay in the loop",
-        newsletterLead: "Get trip ideas and route roundups (coming soon).",
-        placeholder: "you@email.com",
-        button: "Notify me",
-        note: "Newsletter signup is not wired yet.",
         views: "views",
       }
     : {
@@ -48,11 +43,6 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
         viewAll: "전체 보기 →",
         latestTitle: "최신 글",
         latestLead: "방금 올라온 이야기를 만나보세요.",
-        newsletterTitle: "소식 받기",
-        newsletterLead: "새 글·여행 큐레이션 요약을 메일로 받아보세요. (준비 중)",
-        placeholder: "이메일 주소",
-        button: "알림 신청",
-        note: "뉴스레터 연동은 추후 제공됩니다.",
         views: "조회",
       };
 
@@ -207,28 +197,6 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="rounded-3xl border border-[var(--theme-border)] bg-[var(--theme-surface)] px-6 py-12 text-center shadow-sm sm:px-10">
-        <h2 className="font-serif text-2xl font-semibold text-[var(--theme-text)]">{t.newsletterTitle}</h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-[var(--theme-muted)]">{t.newsletterLead}</p>
-        <div className="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row sm:items-stretch">
-          <input
-            type="email"
-            readOnly
-            placeholder={t.placeholder}
-            className="min-h-11 flex-1 rounded-full border border-[var(--theme-border)] bg-[var(--theme-bg)] px-4 text-sm text-[var(--theme-text)] outline-none ring-[var(--theme-accent)]/30 placeholder:text-[var(--theme-muted)] focus:ring-2"
-          />
-          <button
-            type="button"
-            disabled
-            className="min-h-11 shrink-0 rounded-full bg-[var(--theme-accent)] px-6 text-sm font-semibold text-white opacity-70"
-            title={t.note}
-          >
-            {t.button}
-          </button>
-        </div>
-        <p className="mt-3 text-xs text-[var(--theme-muted)]">{t.note}</p>
       </section>
     </div>
   );
