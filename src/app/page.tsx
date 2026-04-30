@@ -65,7 +65,7 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
         />
         <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-emerald-400/20 blur-2xl" />
-        <div className="relative px-6 py-16 text-center sm:px-10 sm:py-20">
+        <div className="relative px-6 py-24 text-center sm:px-10 sm:py-28">
           <h1 className="mx-auto max-w-3xl font-serif text-4xl font-semibold leading-tight tracking-tight text-[var(--theme-hero-title)] sm:text-5xl">{s.blogName}</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[var(--theme-hero-sub)] sm:text-base">{t.heroLead}</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
