@@ -1,39 +1,110 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { normalizeSiteLang, siteByLang } from "@/lib/site";
+
+function MenuIcon({ open }: { open: boolean }) {
+  if (open) {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+        <path d="M18 6L6 18M6 6l12 12" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
 
 function HeaderInner() {
   const searchParams = useSearchParams();
   const lang = normalizeSiteLang(searchParams.get("lang") ?? undefined);
   const s = siteByLang(lang);
   const withLang = (path: string) => `${path}?lang=${lang}`;
+  const isEn = lang === "en";
+  const [open, setOpen] = useState(false);
+
+  const navLink = "text-sm text-[var(--theme-muted)] transition hover:text-[var(--theme-text)]";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)] backdrop-blur">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-2 px-4 py-3">
-        <Link href={withLang("/")} className="font-semibold text-[var(--theme-text)]">
-          {s.blogName}
-        </Link>
-        <nav className="flex flex-wrap items-center gap-2 text-sm">
-          <Link className="text-[var(--theme-muted)] hover:text-[var(--theme-text)]" href={withLang("/")}>홈</Link>
-          <Link className="text-[var(--theme-muted)] hover:text-[var(--theme-text)]" href={withLang("/best")}>베스트</Link>
-          {s.categories.map((c) => (
-            <Link key={c.slug} className="text-[var(--theme-muted)] hover:text-[var(--theme-text)]" href={withLang(`/c/${c.slug}`)}>
-              {c.title}
+    <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)] backdrop-blur-md">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="flex h-[4.25rem] items-center justify-between gap-4">
+          <Link href={withLang("/")} className="min-w-0 shrink" onClick={() => setOpen(false)}>
+            <span className="block truncate font-serif text-lg font-semibold tracking-tight text-[var(--theme-text)] sm:text-xl">{s.blogName}</span>
+          </Link>
+
+          <nav className="hidden items-center gap-1 lg:flex lg:gap-2" aria-label="Main">
+            <Link className={`${navLink} rounded-full px-3 py-1.5`} href={withLang("/")}>
+              {isEn ? "Home" : "홈"}
             </Link>
-          ))}
-        </nav>
-        <LanguageSwitcher />
+            <Link className={`${navLink} rounded-full px-3 py-1.5`} href={withLang("/best")}>
+              {isEn ? "Best" : "베스트"}
+            </Link>
+            {s.categories.map((c) => (
+              <Link key={c.slug} className={`${navLink} max-w-[7.5rem] truncate rounded-full px-3 py-1.5`} href={withLang(`/c/${c.slug}`)} title={c.title}>
+                {c.title}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="hidden sm:block">
+              <LanguageSwitcher />
+            </div>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-text)] lg:hidden"
+              aria-expanded={open}
+              aria-label={open ? (isEn ? "Close menu" : "메뉴 닫기") : isEn ? "Open menu" : "메뉴 열기"}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <MenuIcon open={open} />
+            </button>
+          </div>
+        </div>
+
+        {open && (
+          <div className="border-t border-[var(--theme-border)] pb-4 lg:hidden">
+            <div className="flex justify-end py-3 sm:hidden">
+              <LanguageSwitcher />
+            </div>
+            <nav className="flex flex-col gap-1" aria-label="Mobile">
+              <Link className="rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-chip-bg)]" href={withLang("/")} onClick={() => setOpen(false)}>
+                {isEn ? "Home" : "홈"}
+              </Link>
+              <Link className="rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-chip-bg)]" href={withLang("/best")} onClick={() => setOpen(false)}>
+                {isEn ? "Best" : "베스트"}
+              </Link>
+              {s.categories.map((c) => (
+                <Link key={c.slug} className="rounded-lg px-3 py-2.5 text-sm text-[var(--theme-muted)] hover:bg-[var(--theme-chip-bg)] hover:text-[var(--theme-text)]" href={withLang(`/c/${c.slug}`)} onClick={() => setOpen(false)}>
+                  {c.title}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );
 }
 
 export function Header() {
-  return <Suspense fallback={<header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)]"><div className="mx-auto max-w-5xl px-4 py-3 text-xs text-[var(--theme-muted)]">...</div></header>}><HeaderInner /></Suspense>;
+  return (
+    <Suspense
+      fallback={
+        <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)]">
+          <div className="mx-auto h-[4.25rem] max-w-6xl px-4 py-3 text-xs text-[var(--theme-muted)]">…</div>
+        </header>
+      }
+    >
+      <HeaderInner />
+    </Suspense>
+  );
 }

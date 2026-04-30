@@ -16,7 +16,7 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <div className="ml-auto flex items-center gap-1 text-xs">
+    <div className="flex shrink-0 items-center gap-1 text-xs">
       <button type="button" onClick={() => switchLang("en")} className={`rounded px-2 py-1 ${current === "en" ? "bg-[var(--theme-chip-bg)] text-[var(--theme-chip-text)]" : "text-[var(--theme-muted)]"}`}>EN</button>
       <button type="button" onClick={() => switchLang("ko")} className={`rounded px-2 py-1 ${current === "ko" ? "bg-[var(--theme-chip-bg)] text-[var(--theme-chip-text)]" : "text-[var(--theme-muted)]"}`}>한국어</button>
     </div>

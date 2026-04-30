@@ -20,7 +20,12 @@ export default function CategoryPage({ params, searchParams }: { params: { categ
       <p className="mb-6 text-sm text-[var(--theme-muted)]">`/c/{params.categorySlug}` — 발행 글 목록</p>
       <ul className="space-y-3">
         {posts.map((p) => (
-          <li key={p.slug}>
+          <li key={p.slug} className="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4">
+            {p.thumbnailUrl ? (
+              <div className="-m-4 mb-4 overflow-hidden rounded-t-xl border-b border-[var(--theme-border)]">
+                <img src={p.thumbnailUrl} alt="" className="h-40 w-full object-cover" loading="lazy" />
+              </div>
+            ) : null}
             <Link className="text-[var(--theme-accent)] hover:text-[var(--theme-accent-strong)] hover:underline" href={withLang(`/blog/${p.slug}`)}>{p.title}</Link>
             <p className="text-sm text-[var(--theme-muted)]">{p.summary}</p>
           </li>

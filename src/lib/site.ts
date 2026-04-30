@@ -14,10 +14,12 @@ export type SitePost = {
   categorySlug: string;
   categoryTitle: string;
   summary: string;
+  /** 선택 입력: 목록/베스트 카드에 쓸 썸네일 URL */
+  thumbnailUrl?: string;
   publishedAt: string;
   viewCount: number;
 };
-export type SiteBest = { slug: string; title: string; categoryTitle: string; viewCount: number };
+export type SiteBest = { slug: string; title: string; categoryTitle: string; thumbnailUrl?: string; viewCount: number };
 
 export type SiteTheme = {
   bg: string;
@@ -36,6 +38,9 @@ export type SiteTheme = {
   heroSub: string;
   headerBg: string;
   footerBg: string;
+  /** 다크 푸터 등에서 본문/보조 텍스트 색 (미지정 시 `text` / `muted`로 폴백) */
+  footerFg?: string;
+  footerMutedFg?: string;
   prose: string;
 };
 
@@ -82,6 +87,8 @@ export function themeToCssVars(theme: SiteTheme): Record<string, string> {
     "--theme-hero-sub": theme.heroSub,
     "--theme-header-bg": theme.headerBg,
     "--theme-footer-bg": theme.footerBg,
+    "--theme-footer-fg": theme.footerFg ?? theme.text,
+    "--theme-footer-muted-fg": theme.footerMutedFg ?? theme.muted,
     "--theme-prose": theme.prose,
   };
 }
