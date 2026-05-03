@@ -36,7 +36,7 @@ function HeaderInner() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)] backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="grid h-[4.25rem] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-3 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-4">
+        <div className="grid h-[4.25rem] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-4">
           <Link href={withLang("/")} className="min-w-0 justify-self-start" onClick={() => setOpen(false)}>
             <span className="block max-w-[11rem] truncate font-serif text-lg font-semibold leading-tight tracking-tight text-[var(--theme-text)] sm:max-w-[15rem] sm:text-xl lg:max-w-[min(17rem,100%)]">
               {s.blogName}
@@ -44,10 +44,10 @@ function HeaderInner() {
           </Link>
 
           <nav
-            className="hidden min-w-0 justify-self-center lg:col-start-2 lg:flex lg:max-w-[min(720px,100%)]"
+            className="hidden min-w-0 w-full justify-self-stretch lg:col-start-2 lg:block"
             aria-label="Main"
           >
-            <div className="flex max-w-full flex-nowrap items-center justify-center gap-0.5 overflow-x-auto overflow-y-hidden py-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-1.5">
+            <div className="flex w-full min-w-0 flex-nowrap items-center justify-start gap-0.5 overflow-x-auto overflow-y-hidden py-0.5 sm:gap-1.5">
               <Link className={navPill} href={withLang("/")}>
                 {isEn ? "Home" : "홈"}
               </Link>
