@@ -36,13 +36,15 @@ function HeaderInner() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)] backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="relative flex h-[4.25rem] items-center gap-4">
-          <Link href={withLang("/")} className="relative z-20 min-w-0 max-w-[40%] flex-1 sm:max-w-[min(14rem,38%)] lg:max-w-[min(17rem,34%)]" onClick={() => setOpen(false)}>
-            <span className="block truncate font-serif text-lg font-semibold leading-tight tracking-tight text-[var(--theme-text)] sm:text-xl">{s.blogName}</span>
+        <div className="grid h-[4.25rem] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-3 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-4">
+          <Link href={withLang("/")} className="min-w-0 justify-self-start" onClick={() => setOpen(false)}>
+            <span className="block max-w-[11rem] truncate font-serif text-lg font-semibold leading-tight tracking-tight text-[var(--theme-text)] sm:max-w-[15rem] sm:text-xl lg:max-w-[min(17rem,100%)]">
+              {s.blogName}
+            </span>
           </Link>
 
           <nav
-            className="absolute left-1/2 top-1/2 z-10 hidden max-w-[min(680px,calc(100vw-10.5rem))] -translate-x-1/2 -translate-y-1/2 sm:max-w-[min(760px,calc(100vw-12.5rem))] lg:block"
+            className="hidden min-w-0 justify-self-center lg:col-start-2 lg:flex lg:max-w-[min(720px,100%)]"
             aria-label="Main"
           >
             <div className="flex max-w-full flex-nowrap items-center justify-center gap-0.5 overflow-x-auto overflow-y-hidden py-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-1.5">
@@ -60,7 +62,7 @@ function HeaderInner() {
             </div>
           </nav>
 
-          <div className="relative z-20 flex min-w-0 flex-1 items-center justify-end gap-2">
+          <div className="flex min-w-0 items-center justify-end gap-2 justify-self-end lg:col-start-3">
             <div className="hidden sm:block">
               <LanguageSwitcher />
             </div>
