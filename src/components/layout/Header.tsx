@@ -30,31 +30,34 @@ function HeaderInner() {
   const isEn = lang === "en";
   const [open, setOpen] = useState(false);
 
-  const navLink = "text-sm text-[var(--theme-muted)] transition hover:text-[var(--theme-text)]";
+  const navPill =
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1.5 text-[0.8125rem] font-medium leading-none text-[var(--theme-muted)] transition hover:text-[var(--theme-text)] sm:px-3 sm:text-sm";
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)] backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4">
         <div className="relative flex h-[4.25rem] items-center gap-4">
-          <Link href={withLang("/")} className="relative z-20 min-w-0 max-w-[45%] flex-1 shrink-0 truncate sm:max-w-none" onClick={() => setOpen(false)}>
-            <span className="block truncate font-serif text-lg font-semibold tracking-tight text-[var(--theme-text)] sm:text-xl">{s.blogName}</span>
+          <Link href={withLang("/")} className="relative z-20 min-w-0 max-w-[40%] flex-1 sm:max-w-[min(14rem,38%)] lg:max-w-[min(17rem,34%)]" onClick={() => setOpen(false)}>
+            <span className="block truncate font-serif text-lg font-semibold leading-tight tracking-tight text-[var(--theme-text)] sm:text-xl">{s.blogName}</span>
           </Link>
 
           <nav
-            className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 lg:flex lg:gap-2"
+            className="absolute left-1/2 top-1/2 z-10 hidden max-w-[min(680px,calc(100vw-10.5rem))] -translate-x-1/2 -translate-y-1/2 sm:max-w-[min(760px,calc(100vw-12.5rem))] lg:block"
             aria-label="Main"
           >
-            <Link className={`${navLink} rounded-full px-3 py-1.5`} href={withLang("/")}>
-              {isEn ? "Home" : "홈"}
-            </Link>
-            <Link className={`${navLink} rounded-full px-3 py-1.5`} href={withLang("/best")}>
-              {isEn ? "Best" : "베스트"}
-            </Link>
-            {s.categories.map((c) => (
-              <Link key={c.slug} className={`${navLink} max-w-[7.5rem] truncate rounded-full px-3 py-1.5`} href={withLang(`/c/${c.slug}`)} title={c.title}>
-                {c.title}
+            <div className="flex max-w-full flex-nowrap items-center justify-center gap-0.5 overflow-x-auto overflow-y-hidden py-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-1.5">
+              <Link className={navPill} href={withLang("/")}>
+                {isEn ? "Home" : "홈"}
               </Link>
-            ))}
+              <Link className={navPill} href={withLang("/best")}>
+                {isEn ? "Best" : "베스트"}
+              </Link>
+              {s.categories.map((c) => (
+                <Link key={c.slug} className={navPill} href={withLang(`/c/${c.slug}`)}>
+                  {c.title}
+                </Link>
+              ))}
+            </div>
           </nav>
 
           <div className="relative z-20 flex min-w-0 flex-1 items-center justify-end gap-2">
@@ -78,15 +81,15 @@ function HeaderInner() {
             <div className="flex justify-end py-3 sm:hidden">
               <LanguageSwitcher />
             </div>
-            <nav className="flex flex-col gap-1" aria-label="Mobile">
-              <Link className="rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-chip-bg)]" href={withLang("/")} onClick={() => setOpen(false)}>
+            <nav className="flex max-w-full flex-col gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Mobile">
+              <Link className="whitespace-nowrap rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-chip-bg)]" href={withLang("/")} onClick={() => setOpen(false)}>
                 {isEn ? "Home" : "홈"}
               </Link>
-              <Link className="rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-chip-bg)]" href={withLang("/best")} onClick={() => setOpen(false)}>
+              <Link className="whitespace-nowrap rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-chip-bg)]" href={withLang("/best")} onClick={() => setOpen(false)}>
                 {isEn ? "Best" : "베스트"}
               </Link>
               {s.categories.map((c) => (
-                <Link key={c.slug} className="rounded-lg px-3 py-2.5 text-sm text-[var(--theme-muted)] hover:bg-[var(--theme-chip-bg)] hover:text-[var(--theme-text)]" href={withLang(`/c/${c.slug}`)} onClick={() => setOpen(false)}>
+                <Link key={c.slug} className="whitespace-nowrap rounded-lg px-3 py-2.5 text-sm text-[var(--theme-muted)] hover:bg-[var(--theme-chip-bg)] hover:text-[var(--theme-text)]" href={withLang(`/c/${c.slug}`)} onClick={() => setOpen(false)}>
                   {c.title}
                 </Link>
               ))}
