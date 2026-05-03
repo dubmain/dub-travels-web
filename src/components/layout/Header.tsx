@@ -35,12 +35,15 @@ function HeaderInner() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)] backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-[4.25rem] items-center justify-between gap-4">
-          <Link href={withLang("/")} className="min-w-0 shrink" onClick={() => setOpen(false)}>
+        <div className="relative flex h-[4.25rem] items-center gap-4">
+          <Link href={withLang("/")} className="relative z-20 min-w-0 max-w-[45%] flex-1 shrink-0 truncate sm:max-w-none" onClick={() => setOpen(false)}>
             <span className="block truncate font-serif text-lg font-semibold tracking-tight text-[var(--theme-text)] sm:text-xl">{s.blogName}</span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex lg:gap-2" aria-label="Main">
+          <nav
+            className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 lg:flex lg:gap-2"
+            aria-label="Main"
+          >
             <Link className={`${navLink} rounded-full px-3 py-1.5`} href={withLang("/")}>
               {isEn ? "Home" : "홈"}
             </Link>
@@ -54,13 +57,13 @@ function HeaderInner() {
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="relative z-20 flex min-w-0 flex-1 items-center justify-end gap-2">
             <div className="hidden sm:block">
               <LanguageSwitcher />
             </div>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-text)] lg:hidden"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-text)] lg:hidden"
               aria-expanded={open}
               aria-label={open ? (isEn ? "Close menu" : "메뉴 닫기") : isEn ? "Open menu" : "메뉴 열기"}
               onClick={() => setOpen((v) => !v)}
