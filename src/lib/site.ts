@@ -15,11 +15,11 @@ export type SitePost = {
   categoryTitle: string;
   summary: string;
   /** 선택 입력: 목록/베스트 카드에 쓸 썸네일 URL */
-  thumbnailUrl?: string;
+  thumbnailUrl?: string | null;
   publishedAt: string;
   viewCount: number;
 };
-export type SiteBest = { slug: string; title: string; categoryTitle: string; thumbnailUrl?: string; viewCount: number };
+export type SiteBest = { slug: string; title: string; categoryTitle: string; thumbnailUrl?: string | null; viewCount: number };
 
 export type SiteTheme = {
   bg: string;
