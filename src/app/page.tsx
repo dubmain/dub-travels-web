@@ -5,6 +5,10 @@ import { normalizeSiteLang, siteByLang } from "@/lib/site";
 
 export const runtime = "edge";
 
+/** next/image 공개 경로용: 로드 전 단색→원본 전환 깜빡임 완화 */
+const HERO_BLUR_DATA_URL =
+  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=";
+
 const categoryGradients = [
   "from-emerald-950 via-emerald-800 to-teal-900",
   "from-stone-800 via-stone-700 to-zinc-800",
@@ -54,6 +58,9 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
           alt="Hero background"
           fill
           priority
+          sizes="100vw"
+          placeholder="blur"
+          blurDataURL={HERO_BLUR_DATA_URL}
           className="object-cover"
         />
         <div
