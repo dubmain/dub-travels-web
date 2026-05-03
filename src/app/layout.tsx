@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-screen flex-col font-sans antialiased" style={themeToCssVars(site.theme) as CSSProperties}>
         <Header />
         <main className="flex-1">
-          <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">{children}</div>
+          <div className="mx-auto max-w-6xl px-4 pb-8 pt-0 sm:pb-10">{children}</div>
         </main>
         <Footer />
       </body>
