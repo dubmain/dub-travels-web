@@ -48,7 +48,7 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
 
   return (
     <div className="space-y-16 sm:space-y-20">
-      <section className="relative overflow-hidden rounded-3xl border border-[var(--theme-border)] shadow-sm">
+      <section className="relative overflow-hidden border border-[var(--theme-border)] shadow-sm">
         <Image
           src="/images/hero-train.png"
           alt="Hero background"
