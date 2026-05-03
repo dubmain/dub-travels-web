@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { normalizeSiteLang, siteByLang } from "@/lib/site";
+
+const MIN_NAV_FONT_PX = 10;
+const MAX_NAV_FONT_PX = 15;
 
 function MenuIcon({ open }: { open: boolean }) {
   if (open) {
@@ -30,8 +33,46 @@ function HeaderInner() {
   const isEn = lang === "en";
   const [open, setOpen] = useState(false);
 
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [navFontPx, setNavFontPx] = useState(MAX_NAV_FONT_PX);
+  const categoriesFingerprint = s.categories.map((c) => `${c.slug}:${c.title}`).join("|");
+
   const navPill =
-    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1.5 text-[0.8125rem] font-medium leading-none text-[var(--theme-muted)] transition hover:text-[var(--theme-text)] sm:px-3 sm:text-sm";
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-[0.65em] py-[0.48em] text-[1em] font-medium leading-none text-[var(--theme-muted)] transition hover:text-[var(--theme-text)]";
+
+  const fitDesktopNav = useCallback(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    if (el.clientWidth < 48) return;
+
+    let lo = MIN_NAV_FONT_PX;
+    let hi = MAX_NAV_FONT_PX;
+    for (let i = 0; i < 12; i++) {
+      const mid = (lo + hi) / 2;
+      el.style.fontSize = `${mid}px`;
+      void el.offsetHeight;
+      if (el.scrollWidth <= el.clientWidth + 1) lo = mid;
+      else hi = mid;
+    }
+    const next = Math.round(lo * 4) / 4;
+    el.style.fontSize = "";
+    setNavFontPx(next);
+  }, []);
+
+  useLayoutEffect(() => {
+    fitDesktopNav();
+    const el = rowRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      requestAnimationFrame(fitDesktopNav);
+    });
+    ro.observe(el);
+    window.addEventListener("resize", fitDesktopNav);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", fitDesktopNav);
+    };
+  }, [fitDesktopNav, lang, categoriesFingerprint, s.blogName]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--theme-border)] bg-[var(--theme-header-bg)] backdrop-blur-md">
@@ -47,7 +88,11 @@ function HeaderInner() {
             className="hidden min-w-0 w-full justify-self-stretch lg:col-start-2 lg:block"
             aria-label="Main"
           >
-            <div className="flex w-full min-w-0 flex-nowrap items-center justify-start gap-0.5 overflow-x-auto overflow-y-hidden py-0.5 sm:gap-1.5">
+            <div
+              ref={rowRef}
+              style={{ fontSize: `${navFontPx}px` }}
+              className="flex w-full min-w-0 flex-nowrap items-center justify-center gap-1 overflow-hidden py-0.5 lg:gap-1.5"
+            >
               <Link className={navPill} href={withLang("/")}>
                 {isEn ? "Home" : "홈"}
               </Link>
@@ -83,7 +128,7 @@ function HeaderInner() {
             <div className="flex justify-end py-3 sm:hidden">
               <LanguageSwitcher />
             </div>
-            <nav className="flex max-w-full flex-col gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Mobile">
+            <nav className="flex max-w-full flex-col gap-1" aria-label="Mobile">
               <Link className="whitespace-nowrap rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-chip-bg)]" href={withLang("/")} onClick={() => setOpen(false)}>
                 {isEn ? "Home" : "홈"}
               </Link>
