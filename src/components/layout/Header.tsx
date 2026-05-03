@@ -85,7 +85,7 @@ function HeaderInner() {
           </Link>
 
           <nav
-            className="hidden min-w-0 w-full justify-self-stretch lg:col-start-2 lg:block"
+            className="hidden min-w-0 w-full justify-self-stretch lg:col-start-2 lg:block lg:px-6 xl:px-8"
             aria-label="Main"
           >
             <div
