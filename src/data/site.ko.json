@@ -1,6 +1,6 @@
 {
   "blogId": 6,
-  "blogName": "dubTRAVELS",
+  "blogName": "여행",
   "tagline": "dubTRAVELS",
   "theme": {
     "bg": "#f4f2ee",
@@ -25,17 +25,34 @@
   },
   "categories": [
     {
-      "slug": "general",
-      "title": "일반"
+      "slug": "destination-picks",
+      "title": "여행지 추천"
+    },
+    {
+      "slug": "trip-planning",
+      "title": "일정 짜기"
+    },
+    {
+      "slug": "budget-travel",
+      "title": "가성비 여행"
+    },
+    {
+      "slug": "family-trip",
+      "title": "가족 여행"
+    },
+    {
+      "slug": "local-experience",
+      "title": "로컬 체험"
     }
   ],
   "posts": [
     {
       "slug": "manual-2df6f3cab0954df1",
       "title": "여행이지롱",
-      "categorySlug": "general",
-      "categoryTitle": "일반",
+      "categorySlug": "destination-picks",
+      "categoryTitle": "여행지 추천",
       "summary": "",
+      "thumbnailUrl": null,
       "publishedAt": "",
       "viewCount": 0
     }
@@ -44,7 +61,8 @@
     {
       "slug": "manual-2df6f3cab0954df1",
       "title": "여행이지롱",
-      "categoryTitle": "일반",
+      "categoryTitle": "여행지 추천",
+      "thumbnailUrl": null,
       "viewCount": 0
     }
   ]

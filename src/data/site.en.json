@@ -1,6 +1,6 @@
 {
   "blogId": 6,
-  "blogName": "dubTRAVELS",
+  "blogName": "여행",
   "tagline": "dubTRAVELS",
   "theme": {
     "bg": "#f4f2ee",
@@ -25,27 +25,45 @@
   },
   "categories": [
     {
-      "slug": "general",
-      "title": "일반"
+      "slug": "destination-picks",
+      "title": "Destination Picks"
+    },
+    {
+      "slug": "trip-planning",
+      "title": "Trip Planning"
+    },
+    {
+      "slug": "budget-travel",
+      "title": "Budget Travel"
+    },
+    {
+      "slug": "family-trip",
+      "title": "Family Travel"
+    },
+    {
+      "slug": "local-experience",
+      "title": "Local Experience"
     }
   ],
   "posts": [
     {
-      "slug": "manual-2df6f3cab0954df1",
-      "title": "여행이지롱",
-      "categorySlug": "general",
-      "categoryTitle": "일반",
-      "summary": "",
-      "publishedAt": "",
-      "viewCount": 0
+      "slug": "safe-note-terms-explained",
+      "title": "SAFE note terms explained",
+      "categorySlug": "destination-picks",
+      "categoryTitle": "Destination Picks",
+      "summary": "SAFE",
+      "thumbnailUrl": null,
+      "publishedAt": "2026-04-18",
+      "viewCount": 11230
     }
   ],
   "best": [
     {
-      "slug": "manual-2df6f3cab0954df1",
-      "title": "여행이지롱",
-      "categoryTitle": "일반",
-      "viewCount": 0
+      "slug": "safe-note-terms-explained",
+      "title": "SAFE note terms explained",
+      "categoryTitle": "Destination Picks",
+      "thumbnailUrl": null,
+      "viewCount": 11230
     }
   ]
 }
