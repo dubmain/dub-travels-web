@@ -48,7 +48,7 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
 
   return (
     <div className="space-y-16 sm:space-y-20">
-      <section className="relative overflow-hidden border border-[var(--theme-border)] shadow-sm">
+      <section className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-[var(--theme-border)] bg-[var(--theme-hero-from)] shadow-sm aspect-[2/1]">
         <Image
           src="/images/hero-train.png"
           alt="Hero background"
@@ -65,7 +65,7 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
         />
         <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-emerald-400/20 blur-2xl" />
-        <div className="relative px-6 py-24 text-center sm:px-10 sm:py-28">
+        <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-6 py-12 text-center sm:px-10 sm:py-16">
           <h1 className="mx-auto max-w-3xl font-serif text-4xl font-semibold leading-tight tracking-tight text-[var(--theme-hero-title)] sm:text-5xl">{s.blogName}</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[var(--theme-hero-sub)] sm:text-base">{t.heroLead}</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
