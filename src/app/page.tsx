@@ -52,7 +52,7 @@ export default function HomePage({ searchParams }: { searchParams?: { lang?: str
 
   return (
     <div className="space-y-16 sm:space-y-20">
-      <section className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-[var(--theme-border)] bg-[var(--theme-hero-from)] shadow-sm aspect-[2/1]">
+      <section className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden border-y border-[var(--theme-border)] bg-[var(--theme-hero-from)] shadow-sm aspect-[2/1]">
         <Image
           src="/images/hero-train.png"
           alt="Hero background"
