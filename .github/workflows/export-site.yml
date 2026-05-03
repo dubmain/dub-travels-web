@@ -18,7 +18,6 @@ jobs:
       BLOG_SLUG: travels
       ADMIN_API_BASE_URL: ${{ secrets.ADMIN_API_BASE_URL }}
       ADMIN_INTERNAL_SECRET: ${{ secrets.ADMIN_INTERNAL_SECRET }}
-      LOCALE: ko
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -41,7 +40,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Fetch bundle and write files
+      - name: Fetch ko/en bundles and write site + posts
         run: |
           node - <<'NODE'
           const fs = require('node:fs');
@@ -50,14 +49,13 @@ jobs:
           const baseRaw = String(process.env.ADMIN_API_BASE_URL || '').replace(/\/+$/, '');
           const base = baseRaw.replace(/\/v1(?:\/admin)?$/i, '');
           const slug = String(process.env.BLOG_SLUG || '').trim();
-          const locale = String(process.env.LOCALE || 'ko').trim();
           const secret = String(process.env.ADMIN_INTERNAL_SECRET || '').trim();
 
           if (!base || !slug || !secret) {
             throw new Error('Missing required env vars (ADMIN_API_BASE_URL, BLOG_SLUG, ADMIN_INTERNAL_SECRET).');
           }
 
-          (async () => {
+          async function fetchBundle(locale) {
             const primary = `${base}/v1/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`;
             const fallback = `${base}/admin/blogs/${encodeURIComponent(slug)}/site-bundle?locale=${encodeURIComponent(locale)}`;
 
@@ -76,59 +74,94 @@ jobs:
             const first = await call(primary);
             if (first.res.ok) {
               parsed = JSON.parse(first.text);
-              console.log(`bundle endpoint matched: ${first.url}`);
+              console.log(`bundle ${locale}: ${first.url}`);
             } else if (first.res.status === 404) {
-              console.warn(`bundle endpoint miss 404: ${first.url}`);
+              console.warn(`bundle ${locale} 404: ${first.url}`);
               const second = await call(fallback);
               if (!second.res.ok) {
-                throw new Error(`bundle fetch failed fallback ${second.res.status}: ${second.text.slice(0, 1200)}`);
+                throw new Error(`bundle ${locale} fallback ${second.res.status}: ${second.text.slice(0, 1200)}`);
               }
               parsed = JSON.parse(second.text);
-              console.log(`bundle endpoint matched: ${second.url}`);
+              console.log(`bundle ${locale}: ${second.url}`);
             } else {
-              throw new Error(`bundle fetch failed primary ${first.res.status}: ${first.text.slice(0, 1200)}`);
+              throw new Error(`bundle ${locale} primary ${first.res.status}: ${first.text.slice(0, 1200)}`);
             }
             const bundle = parsed?.data;
             if (!bundle || !Array.isArray(bundle.posts) || !Array.isArray(bundle.categories)) {
-              throw new Error('Invalid bundle response shape');
+              throw new Error(`Invalid bundle shape for locale=${locale}`);
             }
+            return bundle;
+          }
 
-            const sitePath = path.join(process.cwd(), 'src', 'data', 'site.json');
-            const postsDir = path.join(process.cwd(), 'src', 'data', 'posts');
-            const existing = JSON.parse(fs.readFileSync(sitePath, 'utf8'));
-
-            const postsMeta = [];
-            const slugSet = new Set();
+          function writePostsMd(bundle, subdir) {
+            const postsDir = path.join(process.cwd(), 'src', 'data', 'posts', subdir);
             fs.mkdirSync(postsDir, { recursive: true });
-
+            const slugSet = new Set();
             for (const row of bundle.posts) {
               const s = String(row?.slug || '').trim();
               if (!s) continue;
               slugSet.add(s);
               const body = typeof row.content === 'string' ? row.content : '';
               fs.writeFileSync(path.join(postsDir, `${s}.md`), body, 'utf8');
-              const { content, ...meta } = row;
-              postsMeta.push(meta);
             }
-
             for (const file of fs.readdirSync(postsDir)) {
               if (!file.endsWith('.md')) continue;
               const s = file.slice(0, -3);
               if (!slugSet.has(s)) fs.rmSync(path.join(postsDir, file));
             }
+            return slugSet.size;
+          }
 
-            const nextSite = {
+          function stripLegacyFlatMd() {
+            const root = path.join(process.cwd(), 'src', 'data', 'posts');
+            if (!fs.existsSync(root)) return;
+            for (const ent of fs.readdirSync(root, { withFileTypes: true })) {
+              if (ent.isFile() && ent.name.endsWith('.md')) {
+                fs.rmSync(path.join(root, ent.name));
+              }
+            }
+          }
+
+          function buildSiteJson(existing, bundle) {
+            const postsMeta = [];
+            for (const row of bundle.posts) {
+              const s = String(row?.slug || '').trim();
+              if (!s) continue;
+              const { content: _c, ...meta } = row;
+              postsMeta.push(meta);
+            }
+            return {
               ...existing,
               blogId: bundle.blogId,
+              blogName: bundle.blogName || existing.blogName,
               tagline: bundle.tagline || existing.tagline || '',
               categories: bundle.categories,
               posts: postsMeta,
               best: bundle.best || [],
             };
-            if (!existing.blogName && bundle.blogName) nextSite.blogName = bundle.blogName;
+          }
 
-            fs.writeFileSync(sitePath, `${JSON.stringify(nextSite, null, 2)}\n`, 'utf8');
-            console.log(`bundle synced: ${postsMeta.length} posts`);
+          (async () => {
+            const siteKoPath = path.join(process.cwd(), 'src', 'data', 'site.ko.json');
+            const siteEnPath = path.join(process.cwd(), 'src', 'data', 'site.en.json');
+            const siteLegacyPath = path.join(process.cwd(), 'src', 'data', 'site.json');
+
+            const existingKo = JSON.parse(fs.readFileSync(siteKoPath, 'utf8'));
+            const existingEn = JSON.parse(fs.readFileSync(siteEnPath, 'utf8'));
+
+            const [bundleKo, bundleEn] = await Promise.all([fetchBundle('ko'), fetchBundle('en')]);
+
+            const nextKo = buildSiteJson(existingKo, bundleKo);
+            const nextEn = buildSiteJson(existingEn, bundleEn);
+
+            fs.writeFileSync(siteKoPath, `${JSON.stringify(nextKo, null, 2)}\n`, 'utf8');
+            fs.writeFileSync(siteEnPath, `${JSON.stringify(nextEn, null, 2)}\n`, 'utf8');
+            fs.writeFileSync(siteLegacyPath, `${JSON.stringify(nextKo, null, 2)}\n`, 'utf8');
+
+            stripLegacyFlatMd();
+            const nKo = writePostsMd(bundleKo, 'ko');
+            const nEn = writePostsMd(bundleEn, 'en');
+            console.log(`synced: site.ko/en + site.json mirror; posts ko=${nKo} en=${nEn}`);
           })().catch((e) => {
             console.error(e);
             process.exit(1);
@@ -137,14 +170,13 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          # git diff는 미추적 posts/*.md를 보면 "변경 없음"으로 나와 커밋이 스킵될 수 있음
-          if [ -z "$(git status --porcelain -- src/data/site.json src/data/posts)" ]; then
+          if [ -z "$(git status --porcelain -- src/data/site.ko.json src/data/site.en.json src/data/site.json src/data/posts)" ]; then
             echo "No changes to commit"
             exit 0
           fi
-          git status --short src/data/site.json src/data/posts
+          git status --short src/data/site.ko.json src/data/site.en.json src/data/site.json src/data/posts
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/site.json src/data/posts
-          git commit -m "자동 동기화: site bundle"
+          git add src/data/site.ko.json src/data/site.en.json src/data/site.json src/data/posts
+          git commit -m "자동 동기화: site bundle (ko/en)"
           git push origin HEAD:main
